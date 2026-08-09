@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juhanin Backlog - Master Backlog Collection</title>
+
+  <!-- Base CSS Link -->
+  <link rel="stylesheet" href="base.css">
+
+  <style>
+    /* Specific Landing Page Styles */
+    .hub-container {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .hub-title {
+      font-size: 42px;
+      font-weight: bold;
+      letter-spacing: 8px;
+      color: #ff7518;
+      text-transform: uppercase;
+      text-shadow: 0 0 15px #ff7518, 0 0 30px #b34700;
+      margin-bottom: 10px;
+    }
+
+    .hub-subtitle {
+      font-size: 14px;
+      color: #a89cc2;
+      letter-spacing: 3px;
+      margin-bottom: 50px;
+      text-transform: uppercase;
+    }
+
+    .genre-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .genre-card {
+      background: linear-gradient(145deg, #1d122e, #0d0717);
+      border: 2px solid #ff7518;
+      border-radius: 16px;
+      padding: 45px 25px;
+      text-decoration: none;
+      color: #ebd9ff;
+      transition: all 0.4s ease;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .genre-card:hover {
+      transform: translateY(-10px) scale(1.03);
+      border-color: #9d4edd;
+      background: linear-gradient(145deg, #2a1545, #140a24);
+      box-shadow: 0 0 30px #9d4edd;
+    }
+
+    .genre-icon {
+      font-size: 52px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .genre-card:hover .genre-icon {
+      transform: scale(1.2) rotate(5deg);
+    }
+
+    .genre-card h2 {
+      font-size: 22px;
+      margin: 0 0 10px 0;
+      color: #ffffff;
+      letter-spacing: 2px;
+    }
+
+    .genre-card p {
+      font-size: 13px;
+      color: #a89cc2;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Responsive Grid Breakpoints */
+    @media (max-width: 650px) {
+      .genre-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .hub-title { font-size: 28px; letter-spacing: 4px; }
+      .genre-card { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Atmospheric Overlays -->
+  <div class="scanlines"></div>
+  <div class="glitch-overlay"></div>
+  <div class="spotlight"></div>
+  <div class="blood"></div>
+  <div class="fog"></div>
+
+  <!-- Main Landing Container -->
+  <div class="hub-container">
+    <div class="hub-title">JUHANIN BACKLOG</div>
+    <div class="hub-subtitle">Valitse Kategoria & Valitse Pelisi</div>
+
+    <div class="genre-grid">
+      <!-- Kauhu Card -->
+      <a href="horror.html" class="genre-card">
+        <div class="genre-icon">💀</div>
+        <h2>KAUHU</h2>
+        <p>Tunnelmallista, psykologista ja outoa kauhua.</p>
+      </a>
+
+      <!-- Adventure Card -->
+      <a href="adventure.html" class="genre-card">
+        <div class="genre-icon">🧭</div>
+        <h2>SEIKKAILU</h2>
+        <p>Tutkimusmatkoja, mysteereitä ja tarinankerrontaa.</p>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

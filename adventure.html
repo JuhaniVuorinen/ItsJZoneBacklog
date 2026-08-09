@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juhanin Pelit - Seikkailu</title>
+  
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="adventure.css">
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="genre-nav">
+    <a href="index.html">🏠 KOTI</a>
+    <a href="horror.html">💀 KAUHU</a>
+    <a href="adventure.html" class="active">🌲 Seikkailu</a>
+  </div>
+
+  <div class="scanlines"></div>
+  <div class="glitch-overlay"></div>
+  <div class="spotlight"></div>
+  <div class="blood"></div>
+  <div class="fog"></div>
+
+  <div class="emoji-bg">
+    <div class="floating-emoji">🎃</div>
+    <div class="floating-emoji">👻</div>
+    <div class="floating-emoji">💀</div>
+    <div class="floating-emoji">🦇</div>
+    <div class="floating-emoji">🕷️</div>
+    <div class="floating-emoji">🔮</div>
+  </div>
+
+  <div class="spiders">
+    <div class="spider">🕷️</div>
+    <div class="spider">🕷️</div>
+    <div class="spider">🕷️</div>
+    <div class="spider">🕷️</div>
+  </div>
+
+  <div class="main-title">
+    JUHANIN SEIKKAILUT
+    <span>Secrets of the Unknown</span>
+  </div>
+
+  <div class="nav left" id="prevBtn" onclick="prev()">❮</div>
+  <div class="nav right" id="nextBtn" onclick="next()">❯</div>
+
+  <div class="container" id="slides"></div>
+
+  <div class="dots-container" id="dots"></div>
+
+  <!-- Load Supabase Client SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Load Adventure Data & Shared Script -->
+  <script src="data/adventureData.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

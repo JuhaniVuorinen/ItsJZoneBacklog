@@ -1,0 +1,96 @@
+body { background: #070f0b; }
+
+/* Progress Bar & Headers */
+.progress-bar {
+  background: linear-gradient(90deg, #10b981, #a3e635);
+  box-shadow: 0 0 10px #10b981, 0 0 20px #a3e635;
+}
+
+.genre-nav a { border-color: #10b981; }
+.genre-nav a.active,
+.genre-nav a:hover {
+  background: #10b981;
+  border-color: #a3e635;
+  color: #fff;
+  box-shadow: 0 0 12px #10b981;
+}
+
+.main-title {
+  color: #10b981;
+  text-shadow: 0 0 10px #10b981, 0 0 20px #047857, 0 0 30px #a3e635;
+}
+
+h1 {
+  color: #a3e635;
+  text-shadow: 0 0 15px #10b981, 0 0 30px #047857;
+}
+
+/* Atmospheric Forest Spore/Ember Effects */
+.fog { background: radial-gradient(circle at center, rgba(16, 185, 129, 0.15), transparent 70%); }
+
+.floating-emoji { animation: emberRise 8s ease-in-out infinite; }
+.floating-emoji:nth-child(1) { left: 10%; animation-delay: 0s; }
+.floating-emoji:nth-child(2) { left: 25%; animation-delay: 2s; }
+.floating-emoji:nth-child(3) { left: 40%; animation-delay: 1s; }
+.floating-emoji:nth-child(4) { left: 55%; animation-delay: 3s; }
+.floating-emoji:nth-child(5) { left: 70%; animation-delay: 0.5s; }
+.floating-emoji:nth-child(6) { left: 85%; animation-delay: 2.5s; }
+
+@keyframes emberRise {
+  0% { transform: translateY(105vh) scale(0.8) rotate(0deg); opacity: 0.2; }
+  50% { opacity: 0.8; filter: drop-shadow(0 0 10px #10b981); }
+  100% { transform: translateY(-10vh) scale(1.3) rotate(45deg); opacity: 0; }
+}
+
+/* Game Cards & Hover */
+.games::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+
+.game {
+  background: linear-gradient(145deg, #0e271c, #05120d);
+  border: 1px solid #10b981;
+}
+
+.game:hover {
+  background: #163f2e;
+  border-color: #a3e635;
+  box-shadow: 0 0 15px #a3e635;
+  animation: actionPulse 0.4s ease-in-out alternate;
+}
+
+.game::after {
+  content: "🌿";
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+@keyframes actionPulse {
+  0% { box-shadow: 0 0 5px #10b981; }
+  100% { box-shadow: 0 0 25px #a3e635; }
+}
+
+.covers img {
+  border: 2px solid #10b981;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+}
+
+.covers img:hover {
+  border-color: #a3e635;
+  box-shadow: 0 0 40px #a3e635;
+}
+
+/* Controls */
+.nav {
+  color: #a3e635;
+  border: 1px solid #10b981;
+}
+
+.nav:hover {
+  background: #10b981;
+  box-shadow: 0 0 20px #a3e635;
+}
+
+.dot { border: 1px solid #10b981; }
+.dot.active {
+  background: #10b981;
+  box-shadow: 0 0 12px #10b981, 0 0 20px #a3e635;
+}

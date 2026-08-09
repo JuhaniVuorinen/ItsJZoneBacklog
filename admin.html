@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juhanin Pelit - Admin Hallinta</title>
+  <link rel="stylesheet" href="base.css">
+  <style>
+    body {
+      overflow-y: auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #0d0a14;
+      color: #ddd;
+    }
+    .admin-container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(24, 16, 40, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      margin-bottom: 40px;
+    }
+    h1 { font-size: 24px; margin-top: 0; text-align: center; color: #ff7518; }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    label { font-size: 12px; text-transform: uppercase; margin-bottom: 5px; color: #a89cc2; }
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: #08040d;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+    }
+    button {
+      background: #ff7518;
+      color: #000;
+      border: none;
+      padding: 12px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      width: 100%;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+    button:hover { background: #9d4edd; color: #fff; box-shadow: 0 0 15px #9d4edd; }
+    .games-list-container {
+      width: 100%;
+      max-width: 800px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(24, 16, 40, 0.9);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+    }
+    th { background: #181028; color: #ff7518; text-transform: uppercase; font-size: 11px; }
+    .action-btns { display: flex; gap: 5px; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 0; width: auto; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .back-link { position: fixed; top: 20px; left: 20px; color: #ddd; text-decoration: none; font-size: 13px; background: rgba(0,0,0,0.5); padding: 8px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-link">🏠 Takaisin etusivulle</a>
+
+  <div class="admin-container">
+    <h1>Lisää tai muokkaa peliä</h1>
+    <form id="gameForm">
+      <input type="hidden" id="gameId">
+      
+      <div class="form-group">
+        <label for="genreSelect">Genre (Sivu)</label>
+        <select id="genreSelect" required onchange="updateCategoryDropdownOptions()">
+          <option value="horror">Kauhu (horror)</option>
+          <option value="adventure">Seikkailu (adventure)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="categorySelect">Kategoria</label>
+        <select id="categorySelect" required>
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="nameInput">Pelin Nimi</label>
+        <input type="text" id="nameInput" required placeholder="Esim. Amnesia">
+      </div>
+
+      <div class="form-group">
+        <label for="appIdInput">Steam App ID (valinnainen)</label>
+        <input type="text" id="appIdInput" placeholder="Esim. 57300">
+      </div>
+
+      <div class="form-group">
+        <label for="psUrlInput">PlayStation URL (valinnainen)</label>
+        <input type="text" id="psUrlInput" placeholder="https://store.playstation.com/...">
+      </div>
+
+      <div class="form-group">
+        <label for="statusSelect">Tila (Status)</label>
+        <select id="statusSelect">
+          <option value="backlog">Backlog</option>
+          <option value="playing">Playing</option>
+          <option value="completed">Completed</option>
+          <option value="dropped">Dropped</option>
+        </select>
+      </div>
+
+      <button type="submit" id="saveBtn">Tallenna Peli</button>
+    </form>
+  </div>
+
+  <div class="games-list-container">
+    <h2 style="font-size: 18px; color: #ff7518; text-transform: uppercase; letter-spacing: 2px;">Tietokannan Pelit</h2>
+    <table id="gamesTable">
+      <thead>
+        <tr>
+          <th>Peli</th>
+          <th>Kategoria</th>
+          <th>Tila</th>
+          <th>Toiminnot</th>
+        </tr>
+      </thead>
+      <tbody id="gamesTableBody">
+        <tr><td colspan="4" style="text-align: center;">Ladataan pelejä...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Load Both Data Files -->
+  <script src="data/horror-data.js"></script>
+  <script src="data/adventureData.js"></script>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://japdvdlayamsjmyukgxn.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_7zq4FprR_3qP6UVBX_kuRg_2B7WxA9x";
+
+    const supabaseClient = (typeof window.supabase !== 'undefined') 
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+      : null;
+
+    const gameForm = document.getElementById("gameForm");
+    const gamesTableBody = document.getElementById("gamesTableBody");
+    const saveBtn = document.getElementById("saveBtn");
+    const genreSelect = document.getElementById("genreSelect");
+    const categorySelect = document.getElementById("categorySelect");
+
+    function updateCategoryDropdownOptions(selectedCategory = "") {
+      const currentGenre = genreSelect.value;
+      let categories = [];
+
+      try {
+        if (currentGenre === "horror") {
+          if (typeof horrorData !== "undefined") categories = horrorData.map(cat => cat.category);
+          else if (typeof genreData !== "undefined") categories = genreData.map(cat => cat.category);
+        } else if (currentGenre === "adventure") {
+          if (typeof adventureData !== "undefined") categories = adventureData.map(cat => cat.category);
+          else if (typeof genreData !== "undefined") categories = genreData.map(cat => cat.category);
+        }
+      } catch (e) {
+        console.warn("Could not read local data categories:", e);
+      }
+
+      let optionsHTML = `<option value="">-- Valitse kategoria --</option>`;
+      categories.forEach(cat => {
+        const isSelected = cat === selectedCategory ? "selected" : "";
+        optionsHTML += `<option value="${cat}" ${isSelected}>${cat}</option>`;
+      });
+      categorySelect.innerHTML = optionsHTML;
+    }
+
+    async function fetchAllGames() {
+      if (!supabaseClient) {
+        gamesTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Supabase ei yhdistynyt!</td></tr>`;
+        return;
+      }
+
+      const { data, error } = await supabaseClient
+        .from("games")
+        .select("*")
+        .order("id", { ascending: false });
+
+      if (error) {
+        console.error("Virhe ladattaessa:", error);
+        gamesTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: red;">Virhe ladattaessa pelejä: ${error.message}</td></tr>`;
+        return;
+      }
+
+      const allFetchedGames = data || [];
+
+      if (allFetchedGames.length === 0) {
+        gamesTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Ei pelejä tietokannassa vielä.</td></tr>`;
+        return;
+      }
+
+      gamesTableBody.innerHTML = allFetchedGames.map(game => `
+        <tr>
+          <td><strong>${game.name}</strong><br><small style="color:#8a7f9e">${game.genre}</small></td>
+          <td>${game.category}</td>
+          <td><span class="status-badge ${game.status || 'backlog'}">${game.status || 'backlog'}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="btn-sm" onclick="editGame(${game.id}, '${escapeHtml(game.genre)}', '${escapeHtml(game.category)}', '${escapeHtml(game.name)}', '${game.app_id || ''}', '${game.ps_url || ''}', '${game.status || 'backlog'}')">Muokkaa</button>
+              <button class="btn-sm btn-danger" onclick="deleteGame(${game.id})">Poista</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    gameForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById("gameId").value;
+      const genre = genreSelect.value;
+      const category = categorySelect.value;
+      const name = document.getElementById("nameInput").value.trim();
+      const appId = document.getElementById("appIdInput").value.trim();
+      const psUrl = document.getElementById("psUrlInput").value.trim();
+      const status = document.getElementById("statusSelect").value;
+
+      if (!category) {
+        alert("Valitse kategoria!");
+        return;
+      }
+
+      const payload = {
+        genre,
+        category,
+        name,
+        app_id: appId || null,
+        ps_url: psUrl || null,
+        status
+      };
+
+      if (id) {
+        const { error } = await supabaseClient
+          .from("games")
+          .update(payload)
+          .eq("id", id);
+
+        if (error) alert("Päivitys epäonnistui: " + error.message);
+        else {
+          alert("Peli päivitetty!");
+          resetForm();
+        }
+      } else {
+        const { error } = await supabaseClient
+          .from("games")
+          .insert([payload]);
+
+        if (error) alert("Tallennus epäonnistui: " + error.message);
+        else {
+          alert("Uusi peli lisätty!");
+          resetForm();
+        }
+      }
+
+      fetchAllGames();
+    });
+
+    window.editGame = function(id, genre, category, name, appId, psUrl, status) {
+      document.getElementById("gameId").value = id;
+      genreSelect.value = genre;
+      updateCategoryDropdownOptions(category);
+      
+      document.getElementById("nameInput").value = name;
+      document.getElementById("appIdInput").value = appId === 'null' ? '' : appId;
+      document.getElementById("psUrlInput").value = psUrl === 'null' ? '' : psUrl;
+      document.getElementById("statusSelect").value = status;
+      saveBtn.innerText = "Päivitä Peli";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.deleteGame = async function(id) {
+      if (!confirm("Haluatko varmasti poistaa tämän pelin?")) return;
+
+      const { error } = await supabaseClient
+        .from("games")
+        .delete()
+        .eq("id", id);
+
+      if (error) alert("Poisto epäonnistui: " + error.message);
+      else fetchAllGames();
+    }
+
+    function resetForm() {
+      gameForm.reset();
+      document.getElementById("gameId").value = "";
+      updateCategoryDropdownOptions();
+      saveBtn.innerText = "Tallenna Peli";
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    updateCategoryDropdownOptions();
+    fetchAllGames();
+  </script>
+</body>
+</html>
